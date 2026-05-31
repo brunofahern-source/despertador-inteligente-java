@@ -40,8 +40,10 @@ Relaciones: Se utiliza Composición para SoundProfile y SnoozeConfig, ya que su 
 Encapsulación: Todos los atributos son private y se acceden mediante métodos public (Getters/Setters), protegiendo la lógica interna.
 
 ### 7. Diagrama de Clases UML (Mermaid)
-```
+%%{init: {'theme': 'neutral', 'themeVariables': { 'primaryColor': '#ffffff', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#f4f4f4'}}}%%
 classDiagram
+    direction LR
+
     class AlarmManager {
         -List~Alarm~ alarms
         -boolean vacationMode
@@ -77,6 +79,7 @@ classDiagram
         -int operand2
         -int result
         -generateProblem()
+        +solve(String answer) boolean
     }
 
     class SoundProfile {
@@ -99,16 +102,13 @@ classDiagram
         +resetTries()
     }
 
-    %% Relaciones
+    %% Relaciones Estructurales
     AlarmManager "1" *-- "many" Alarm : gestiona
     Alarm "1" *-- "1" SoundProfile : tiene
     Alarm "1" *-- "1" Recurrence : tiene
     Alarm "1" *-- "1" SnoozeConfig : tiene
     Alarm "1" o-- "0..1" Challenge : requiere (opcional)
     Challenge <|.. MathChallenge : implementa
-```
-
-Justificación: Se ha utilizado encapsulación (atributos privados con getters/setters) para proteger la integridad de los datos. La relación entre Alarm y Challenge es una agregación opcional, permitiendo alarmas con o sin reto.
 
 ### 8. Diagrama de Casos de Uso
 
