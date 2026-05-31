@@ -1,7 +1,6 @@
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.EnumSet;
-import java.util.Scanner; // Por si quieres probar entrada real luego
 
 public class Main {
     public static void main(String[] args) {
@@ -65,7 +64,7 @@ public class Main {
         System.out.println("\n--- Probando flujo circadiano ---");
         manager.checkActiveAlarms(LocalTime.of(7, 58)); // Debería activar el amanecer progresivo
         manager.checkActiveAlarms(LocalTime.of(8, 0));  // Debería sonar la alarma y pedir el reto
-        
+
         System.out.println("\n✅ Pruebas finalizadas.");
     }
 }
