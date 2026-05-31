@@ -55,6 +55,16 @@ public class Main {
         System.out.println("\n🏖️ Probando MODO VACACIONES...");
         manager.toggleVacationMode(true);
         manager.checkActiveAlarms(ahora.plusMinutes(1)); // No debería sonar nada
+
+        // Simulamos que faltan 2 minutos para la alarma
+        LocalTime horaAlarma = LocalTime.of(8, 0);
+        Alarm alarmaPro = new Alarm(1, horaAlarma, "Despertar Importante", diaria);
+        alarmaPro.getSound().setProgressive(true);
+        manager.addAlarm(alarmaPro);
+
+        System.out.println("\n--- Probando flujo circadiano ---");
+        manager.checkActiveAlarms(LocalTime.of(7, 58)); // Debería activar el amanecer progresivo
+        manager.checkActiveAlarms(LocalTime.of(8, 0));  // Debería sonar la alarma y pedir el reto
         
         System.out.println("\n✅ Pruebas finalizadas.");
     }

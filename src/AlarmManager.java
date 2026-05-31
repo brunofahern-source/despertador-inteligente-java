@@ -43,7 +43,7 @@ public class AlarmManager {
     }
 
     /**
-     * Comprueba si alguna alarma debe sonar en este momento.
+     * Comprueba si alguna alarma debe iniciar el despertar circadiano o sonar.
      * @param now Hora actual para comparar.
      */
     public void checkActiveAlarms(LocalTime now) {
@@ -51,13 +51,22 @@ public class AlarmManager {
             return; // No se hace nada si estamos de vacaciones
         }
 
-        // Buscamos alarmas que coincidan en hora y minuto, y estén activas
         for (Alarm alarm : alarms) {
-            if (alarm.isActive() && 
-                alarm.getTime().getHour() == now.getHour() && 
-                alarm.getTime().getMinute() == now.getMinute()) {
-                
-                alarm.ring(); // Ejecuta la lógica de sonar
+            if (!alarm.isActive()) {
+                continue;
+            }
+
+            // 1. Inicio del despertar circadiano (2 minutos antes de la hora configurada)
+            LocalTime circadianStart = alarm.getTime().minusMinutes(2);
+            if (now.getHour() == circadianStart.getHour() && 
+                now.getMinute() == circadianStart.getMinute()) {
+                alarm.startCircadianWakeUp();
+            }
+
+            // 2. Alarma principal y Reto (en el minuto exacto)
+            if (now.getHour() == alarm.getTime().getHour() && 
+                now.getMinute() == alarm.getTime().getMinute()) {
+                alarm.ring();
             }
         }
     }

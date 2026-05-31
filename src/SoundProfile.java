@@ -19,6 +19,7 @@ public class SoundProfile {
     public void increaseVolume() {
         if (volume < 100) {
             volume += 5;
+            System.out.println("🔊 Volumen subiendo... Actual: " + volume + "%");
         }
     }
 

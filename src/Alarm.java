@@ -50,6 +50,20 @@ public class Alarm {
         return true;
     }
 
+public void startCircadianWakeUp() {
+    System.out.println("\n🌅 [DESPERTAR CIRCADIANO] Iniciando para: " + label);
+    System.out.println("💡 Simulando aumento gradual de brillo en pantalla...");
+    
+    // Simulamos el incremento de volumen progresivo
+    if (sound.isProgressive()) {
+        sound.setVolume(10); // Empezamos bajo
+        for (int i = 0; i < 5; i++) {
+            sound.increaseVolume();
+        }
+    }
+    System.out.println("🎶 Sonido actual: Naturaleza/Relajante (" + sound.getTrackName() + ")");
+}
+
     // --- GETTERS Y SETTERS ---
 
     public int getId() { return id; }
