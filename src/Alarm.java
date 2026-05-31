@@ -1,81 +1,89 @@
 import java.time.LocalTime;
 import java.util.Objects;
 
-/**
- * Clase que representa la lógica base de una Alarma. Se centra en el
- * almacenamiento de datos y estados.
- */
 public class Alarm {
-	private int id;
-	private LocalTime time;
-	private String label;
-	private boolean active;
+    // Atributos base
+    private int id;
+    private LocalTime time;
+    private String label;
+    private boolean active;
+    
+    // Atributos de composición (Objetos relacionados)
+    private SoundProfile sound;
+    private Recurrence recurrence;
+    private SnoozeConfig snooze;
+    private Challenge challenge; // Puede ser null
 
-	// Estos objetos se implementarán en los siguientes pasos
-	private SoundProfile sound;
-	private Recurrence recurrence;
-	private SnoozeConfig snooze;
+    public Alarm(int id, LocalTime time, String label, Recurrence recurrence) {
+        this.id = id;
+        this.time = Objects.requireNonNull(time, "La hora no puede ser nula");
+        this.label = (label == null || label.isEmpty()) ? "Alarma" : label;
+        this.recurrence = recurrence;
+        this.active = true;
+        this.sound = new SoundProfile(); 
+        this.snooze = new SnoozeConfig();
+        this.challenge = null;
+    }
 
-	public Alarm(int id, LocalTime time, String label, Recurrence recurrence) {
-		this.id = id;
-		this.time = Objects.requireNonNull(time, "La hora no puede ser nula");
-		this.label = (label == null || label.isEmpty()) ? "Alarma" : label;
-		this.recurrence = recurrence;
-		this.active = true; // Por defecto, una alarma creada está activa
+    // --- MÉTODOS DE LÓGICA ---
 
-		// Inicialización por defecto de componentes
-		this.sound = new SoundProfile();
-		this.snooze = new SnoozeConfig();
-	}
+    public void ring() {
+        if (this.active) {
+            System.out.println("\n🔔 [ALERTA] " + label + " sonando a las " + time);
+            if (hasChallenge()) {
+                System.out.println("⚠️ RETO ACTIVO: " + challenge.getPrompt());
+            }
+        }
+    }
 
-	// --- MÉTODOS DE LÓGICA ---
+    public boolean stop(String answer) {
+        if (hasChallenge()) {
+            if (challenge.solve(answer)) {
+                System.out.println("✅ Reto superado.");
+                return true;
+            } else {
+                System.out.println("❌ Respuesta incorrecta. La alarma sigue sonando.");
+                return false;
+            }
+        }
+        System.out.println("⏹️ Alarma '" + label + "' detenida.");
+        return true;
+    }
 
-	public void toggle() {
-		this.active = !this.active;
-	}
+    // --- GETTERS Y SETTERS ---
 
-	public void ring() {
-		if (this.active) {
-			System.out.println("🔔 [" + time + "] " + label + " SONANDO...");
-		}
-	}
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-	public void stop() {
-		System.out.println("⏹️ Alarma '" + label + "' detenida.");
-	}
+    public LocalTime getTime() { return time; }
+    public void setTime(LocalTime time) { this.time = time; }
 
-	// --- GETTERS Y SETTERS ---
+    public String getLabel() { return label; }
+    public void setLabel(String label) { this.label = label; }
 
-	public int getId() {
-		return id;
-	}
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 
-	public LocalTime getTime() {
-		return time;
-	}
+    public SoundProfile getSound() { return sound; }
+    public void setSound(SoundProfile sound) { this.sound = sound; }
 
-	public void setTime(LocalTime time) {
-		this.time = time;
-	}
+    public Recurrence getRecurrence() { return recurrence; }
+    public void setRecurrence(Recurrence recurrence) { this.recurrence = recurrence; }
 
-	public String getLabel() {
-		return label;
-	}
+    public SnoozeConfig getSnooze() { return snooze; }
+    public void setSnooze(SnoozeConfig snooze) { this.snooze = snooze; }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public Challenge getChallenge() { return challenge; }
+    public void setChallenge(Challenge challenge) { this.challenge = challenge; }
 
-	public boolean isActive() {
-		return active;
-	}
+    public boolean hasChallenge() { return challenge != null; }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    // --- UTILIDADES ---
 
-	@Override
-	public String toString() {
-		return String.format("[%02d] %s - %s (%s)", id, time, label, (active ? "ACTIVA" : "DESACTIVADA"));
-	}
+    @Override
+    public String toString() {
+        String infoReto = hasChallenge() ? " [RETO: SI]" : " [RETO: NO]";
+        return String.format("[%02d] %s - %s (%s)%s", 
+            id, time, label, (active ? "ACTIVA" : "DES"), infoReto);
+    }
 }

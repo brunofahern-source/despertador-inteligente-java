@@ -1,61 +1,61 @@
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.EnumSet;
+import java.util.Scanner; // Por si quieres probar entrada real luego
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("⏰ INICIANDO SMART ALARM SYSTEM...");
+        System.out.println("⏰ INICIANDO SMART ALARM SYSTEM CON RETOS...");
         
         // 1. Inicializar el Manager
         AlarmManager manager = new AlarmManager();
-
-        // 2. Crear una alarma para "dentro de un minuto" para probar
         LocalTime ahora = LocalTime.now();
-        LocalTime horaAlarma = ahora.plusMinutes(1);
-        
-        // Alarma diaria (Lunes a Domingo)
         Recurrence diaria = new Recurrence(EnumSet.allOf(DayOfWeek.class));
-        Alarm alarma1 = new Alarm(1, horaAlarma, "Gimnasio", diaria);
-        
-        // Alarma de fin de semana
-        Recurrence finde = new Recurrence(EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY));
-        Alarm alarma2 = new Alarm(2, LocalTime.of(10, 30), "Descanso", finde);
 
-        // 3. Añadir alarmas al sistema
+        // 2. Crear alarmas normales
+        Alarm alarma1 = new Alarm(1, ahora.plusMinutes(1), "Gimnasio", diaria);
         manager.addAlarm(alarma1);
-        manager.addAlarm(alarma2);
+        
+        // 3. NUEVA ALARMA CON RETO MATEMÁTICO
+        // Programada para dentro de 5 minutos según tu petición
+        Alarm alarmaConReto = new Alarm(3, ahora.plusMinutes(5), "Despertar Pro", diaria);
+        alarmaConReto.setChallenge(new MathChallenge());
+        manager.addAlarm(alarmaConReto);
 
-        System.out.println("\n--- ESTADO INICIAL ---");
+        System.out.println("\n--- ESTADO DE LAS ALARMAS ---");
         manager.getAlarms().forEach(System.out::println);
 
-        // 4. SIMULACIÓN DE RELOJ
-        // Vamos a simular que pasan 2 minutos para ver si la alarma 1 suena
-        System.out.println("\n⏳ Iniciando simulación de tiempo (2 minutos)...");
-        
-        for (int i = 0; i <= 120; i++) { // 120 segundos
-            LocalTime tiempoSimulado = ahora.plusSeconds(i);
+        // 4. PRUEBA ESPECÍFICA DEL RETO (Simulación de usuario)
+        System.out.println("\n--- SIMULACIÓN DE INTERACCIÓN CON RETO ---");
+        if (alarmaConReto.hasChallenge()) {
+            // Mostramos el reto generado aleatoriamente
+            System.out.println("🔔 Alarma sonando: " + alarmaConReto.getLabel());
+            System.out.println("📝 Reto: " + alarmaConReto.getChallenge().getPrompt());
             
-            // Solo imprimimos cada 30 segundos para no saturar la consola
-            if (i % 30 == 0) {
-                System.out.println("🕒 Hora actual simulada: " + tiempoSimulado.getHour() + ":" + tiempoSimulado.getMinute() + ":" + tiempoSimulado.getSecond());
-            }
-
-            // El Manager chequea si debe sonar algo
-            manager.checkActiveAlarms(tiempoSimulado);
-
-            try {
-                Thread.sleep(100); // Aceleramos la simulación (100ms reales = 1s simulado)
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            // Simulamos un intento fallido y luego uno exitoso (puedes cambiar "15" por el resultado real)
+            System.out.println("Intentando apagar con respuesta errónea '999'...");
+            alarmaConReto.stop("999");
+            
+            // En una ejecución real, aquí obtendríamos la respuesta del usuario por teclado
+            // Para esta prueba, usamos un valor fijo o el resultado del reto si quieres forzar el éxito:
+            // String respuestaCorrecta = String.valueOf(tu_logica_aqui); 
+            System.out.println("Intentando apagar con respuesta '15' (simulada)...");
+            boolean exito = alarmaConReto.stop("15"); 
+            
+            if (exito) {
+                System.out.println("✅ El sistema de retos funciona correctamente.");
             }
         }
 
-        // 5. PROBAR MODO VACACIONES
+        // 5. SIMULACIÓN DE TIEMPO (Corta para no esperar los 5 minutos)
+        System.out.println("\n⏳ Ejecutando chequeo rápido del manager...");
+        manager.checkActiveAlarms(ahora.plusMinutes(1)); // Debería sonar la Alarma 1
+        
+        // 6. PROBAR MODO VACACIONES
         System.out.println("\n🏖️ Probando MODO VACACIONES...");
         manager.toggleVacationMode(true);
-        System.out.println("Intentando hacer sonar la alarma a las " + horaAlarma + " con modo vacaciones activo:");
-        manager.checkActiveAlarms(horaAlarma); // No debería imprimir nada
+        manager.checkActiveAlarms(ahora.plusMinutes(1)); // No debería sonar nada
         
-        System.out.println("\n✅ Simulación finalizada con éxito.");
+        System.out.println("\n✅ Pruebas finalizadas.");
     }
 }
